@@ -14,7 +14,7 @@ A free, fully local Wispr Flow–style dictation app for macOS. Hold the 🎤 ke
 | Double-tap 🎤 | Hands-free mode. Tap again to finish |
 | Esc while recording | Cancel |
 
-The menu bar icon has: last dictation (paste/copy), hotkey choice, speech model, filler-word removal, spoken punctuation, smart spacing, per-app writing style, sounds, launch at login.
+The menu bar icon has: last dictation (paste/copy), hotkey choice, speech model, filler-word removal, spoken punctuation, smart spacing, per-app writing style, vocabulary, contact names, sounds, launch at login.
 
 ## Formatting
 
@@ -22,6 +22,25 @@ The menu bar icon has: last dictation (paste/copy), hotkey choice, speech model,
 - **Spoken punctuation** works on top of it: say "comma", "period", "question mark", "exclamation point", "colon", "semicolon", "new line", "new paragraph", "open/close quote", "open/close paren", "em dash", or "dot dot dot".
 - **Smart spacing & capitalization** reads the text around the cursor (via Accessibility). It adds the space after the previous sentence and lowercases when you're mid-sentence. For apps that hide their text, it remembers what it last pasted.
 - **Per-app styles:** Casual (all lowercase, acronyms kept, no automatic final period) is preset for Messages. Any app can be set from the menu.
+
+## Your vocabulary
+
+Menu → **Edit Vocabulary…** opens `~/Library/Application Support/DictionApp/Vocabulary.md`. It reloads as soon as you save.
+
+```markdown
+## Words          names, places, brands. Every app.
+Anirudh | Anirud      ← after the | : what it comes out as; always swapped back
+
+## Slang          only in Casual apps (Messages)
+fuh
+
+## Replacements   every app
+gonna -> going to
+```
+
+- Words and names are **listened for**: a second small model (Parakeet CTC 110M, ~100 MB, downloaded once) checks the audio for your terms and fixes near-misses ("Sharav" → "Shaarav"). It only runs when the transcript has something close to one of your terms (~+80 ms).
+- **Use Contact Names** (menu) adds first, last and nicknames from Contacts that the dictionary doesn't know (Indian and unusual names, uncommon spellings). Phonetic names in Contacts are used as hints. Stays on this Mac and refreshes when Contacts changes.
+- Short slang that sounds like a common word ("fuh" vs "for") can't be told apart by sound. Use a swap (`fuh | for`) if you want it.
 
 ## Build & install
 

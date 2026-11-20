@@ -84,6 +84,22 @@ private struct MenuContent: View {
                 }
             }
         }
+
+        Divider()
+
+        Button("Edit Vocabulary… (\(controller.vocabularySummary))") { controller.editVocabulary() }
+        Toggle(
+            controller.useContactNames && controller.contactNameCount > 0
+                ? "Use Contact Names (\(controller.contactNameCount) names)"
+                : "Use Contact Names",
+            isOn: $controller.useContactNames
+        )
+        if controller.contactsDenied {
+            Button("Contacts Access Is Off. Open Settings…") { Permissions.openContactsSettings() }
+        }
+
+        Divider()
+
         Toggle("Launch at Login", isOn: $controller.launchAtLogin)
 
         Divider()

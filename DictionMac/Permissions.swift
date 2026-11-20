@@ -34,6 +34,10 @@ enum Permissions {
         open("Privacy_Accessibility")
     }
 
+    static func openContactsSettings() {
+        open("Privacy_Contacts")
+    }
+
     private static func open(_ anchor: String) {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(anchor)") {
             NSWorkspace.shared.open(url)

@@ -119,29 +119,50 @@ enum FocusedTextReader {
 /// lowercase ("station").
 enum ProperNouns {
     nonisolated(unsafe) private static var namesOnly: Set<String> = []
-    private static let lock = NSLock()
+    nonisolated(unsafe) private static var allWords: Set<String>?
+    nonisolated(unsafe) private static var custom: Set<String> = []
+    private static let lock = NSLock()      // guards the sets
+    private static let loadLock = NSLock()  // makes sure the word lists load once
 
     /// Loads the word lists in the background at launch (~0.2 s, a few MB).
     static func preload() {
-        DispatchQueue.global(qos: .utility).async {
-            var lowercase = Set<String>()
-            var capitalized = Set<String>()
-            for path in ["/usr/share/dict/web2", "/usr/share/dict/propernames"] {
-                guard let contents = try? String(contentsOfFile: path, encoding: .utf8) else { continue }
-                for line in contents.split(separator: "\n") {
-                    guard let first = line.first else { continue }
-                    if first.isUppercase { capitalized.insert(line.lowercased()) } else { lowercase.insert(String(line)) }
-                }
+        DispatchQueue.global(qos: .utility).async { _ = dictionaryWords() }
+    }
+
+    /// Every word in the system word lists, lowercased. Loads them on first use; safe off the main thread.
+    static func dictionaryWords() -> Set<String> {
+        loadLock.lock()
+        defer { loadLock.unlock() }
+        if let words = lock.withLock({ allWords }) { return words }
+
+        var lowercase = Set<String>()
+        var capitalized = Set<String>()
+        for path in ["/usr/share/dict/web2", "/usr/share/dict/propernames"] {
+            guard let contents = try? String(contentsOfFile: path, encoding: .utf8) else { continue }
+            for line in contents.split(separator: "\n") {
+                guard let first = line.first else { continue }
+                if first.isUppercase { capitalized.insert(line.lowercased()) } else { lowercase.insert(String(line)) }
             }
-            let names = capitalized.subtracting(lowercase)
-            lock.withLock { namesOnly = names }
         }
+        let names = capitalized.subtracting(lowercase)
+        let all = lowercase.union(capitalized)
+        lock.withLock {
+            namesOnly = names
+            allWords = all
+        }
+        return all
+    }
+
+    /// Your vocabulary words and contact names, so they keep their capital mid-sentence.
+    static func setCustomNames<S: Sequence>(_ names: S) where S.Element == String {
+        let lowered = Set(names.filter { $0.first?.isUppercase == true }.map { $0.lowercased() })
+        lock.withLock { custom = lowered }
     }
 
     /// `word` is the word as dictated (e.g. "Sarah"). Main thread only (spell checker).
     static func isProperNoun(_ word: String) -> Bool {
         let lower = word.lowercased()
-        if lock.withLock({ namesOnly.contains(lower) }) { return true }
+        if lock.withLock({ namesOnly.contains(lower) || custom.contains(lower) }) { return true }
         // Not a known word at all in lowercase ("sarah", "alex"): probably a name.
         let misspelled = NSSpellChecker.shared.checkSpelling(of: lower, startingAt: 0)
         return misspelled.location != NSNotFound

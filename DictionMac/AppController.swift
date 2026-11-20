@@ -112,6 +112,60 @@ final class AppController: ObservableObject {
         didSet { defaults.set(playSounds, forKey: Keys.playSounds) }
     }
 
+    // MARK: - Personal vocabulary
+
+    /// Recognize names from Contacts. Turning it on asks for Contacts access once.
+    @Published var useContactNames: Bool {
+        didSet {
+            guard useContactNames != oldValue else { return }
+            defaults.set(useContactNames, forKey: Keys.useContactNames)
+            applyContactsSetting()
+        }
+    }
+    @Published private(set) var contactNameCount = 0
+    @Published private(set) var contactsDenied = false
+    @Published private(set) var vocabularySummary = ""
+
+    func editVocabulary() {
+        vocabularyStore.openInEditor()
+    }
+
+    private func applyContactsSetting() {
+        if useContactNames {
+            Task {
+                let granted = await contacts.enable()
+                contactsDenied = !granted
+                if !granted { useContactNames = false }
+            }
+        } else {
+            contacts.disable()
+        }
+    }
+
+    /// Rebuilds everything that depends on the vocabulary file or contact names.
+    private func vocabularyChanged() {
+        let vocabulary = vocabularyStore.vocabulary
+        let contactNames = contacts.names
+        standardReplacer = VocabularyReplacer(vocabulary.textReplacements(casual: false))
+        casualReplacer = VocabularyReplacer(vocabulary.textReplacements(casual: true))
+        ProperNouns.setCustomNames((vocabulary.words + contactNames).map(\.text))
+        contactNameCount = contactNames.count
+
+        var parts = ["\(vocabulary.words.count) words", "\(vocabulary.slang.count) slang"]
+        if !vocabulary.replacements.isEmpty { parts.append("\(vocabulary.replacements.count) replacements") }
+        vocabularySummary = parts.joined(separator: " · ")
+
+        pushVocabulary()
+    }
+
+    private func pushVocabulary() {
+        let vocabulary = vocabularyStore.vocabulary
+        let standard = vocabulary.words + contacts.names
+        let casual = standard + vocabulary.slang
+        let transcriber = self.transcriber
+        Task { await transcriber.setVocabulary(standard: standard, casual: casual) }
+    }
+
     @Published var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled {
         didSet {
             guard launchAtLogin != oldValue else { return }
@@ -134,6 +188,10 @@ final class AppController: ObservableObject {
     private lazy var overlay = OverlayController(controller: self)
     private var transcriber: ParakeetTranscriber
     private var modelLoadTask: Task<Void, Never>?
+    private let vocabularyStore = VocabularyStore()
+    private let contacts = ContactsNameSource()
+    private var standardReplacer = VocabularyReplacer([])
+    private var casualReplacer = VocabularyReplacer([])
 
     // Tap / double-tap detection
     private var pressedAt = Date.distantPast
@@ -153,6 +211,7 @@ final class AppController: ObservableObject {
         static let smartSpacing = "smartSpacing"
         static let appStyles = "appStyles"
         static let playSounds = "playSounds"
+        static let useContactNames = "useContactNames"
     }
 
     private init() {
@@ -171,6 +230,7 @@ final class AppController: ObservableObject {
         let storedStyles = defaults.dictionary(forKey: Keys.appStyles) as? [String: String] ?? [:]
         appStyles = storedStyles.compactMapValues(WritingStyle.init(rawValue:))
         playSounds = defaults.bool(forKey: Keys.playSounds)
+        useContactNames = defaults.bool(forKey: Keys.useContactNames)
         transcriber = ParakeetTranscriber(model: model)
     }
 
@@ -194,6 +254,12 @@ final class AppController: ObservableObject {
         trackFrontmostApp()
         applyTrigger()
         loadModel()
+
+        vocabularyStore.onChange = { [weak self] _ in self?.vocabularyChanged() }
+        contacts.onChange = { [weak self] _ in self?.vocabularyChanged() }
+        vocabularyStore.start()
+        if useContactNames { applyContactsSetting() }
+
         requestPermissionsIfNeeded()
     }
 
@@ -216,6 +282,7 @@ final class AppController: ObservableObject {
         modelLoadTask?.cancel()
         let transcriber = ParakeetTranscriber(model: model)
         self.transcriber = transcriber
+        pushVocabulary()
         phase = .loadingModel(0)
         modelLoadTask = Task { [weak self] in
             do {
@@ -360,6 +427,8 @@ final class AppController: ObservableObject {
         )
         let targetBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
         let style = style(for: targetBundleID)
+        let boost: VocabularyBoost = style == .casual ? .casual : .standard
+        let replacer = style == .casual ? casualReplacer : standardReplacer
         let contextual = smartSpacing
             ? ContextualFormatter(adjustsCapitalization: style.adjustsCapitalization, isProperNoun: isProperNoun)
             : nil
@@ -367,7 +436,7 @@ final class AppController: ObservableObject {
 
         Task {
             do {
-                let raw = try await transcriber.transcribe(audio)
+                let raw = replacer.apply(try await transcriber.transcribe(audio, boost: boost))
                 let formatted = formatter.formatDetailed(raw)
                 var text = style.apply(formatted.text, keepFinalPunctuation: formatted.endsWithSpokenPunctuation)
 

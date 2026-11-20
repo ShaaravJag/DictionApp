@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0EC4150E04C063BF1BD3E570 /* ContactsNameSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF9A61D984A8B9DF360E11C /* ContactsNameSource.swift */; };
 		164148A433A58A8C04104412 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80120800563330B124B9421 /* Permissions.swift */; };
 		27C8A150D309420620D96233 /* DictionMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FD2D855DEF381D8D73FC47 /* DictionMacApp.swift */; };
+		2C32D7020ABE3FECFDD0FDE8 /* VocabularyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE8203DCF3BB7EF8E1C170 /* VocabularyStore.swift */; };
 		41DB8B010BAD40C113309619 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62502889C20C2813FB95A55 /* OverlayController.swift */; };
 		4AD772023CB9FB6F4550179D /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55847E9059F8B2DCE32491D8 /* AppController.swift */; };
 		78462192891FAB31FE75AEE7 /* TextInserter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8165C05037F503630B70E8BB /* TextInserter.swift */; };
@@ -20,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		3E76FD87889F4B2A723FE47D /* DictationCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DictationCore; path = Packages/DictationCore; sourceTree = SOURCE_ROOT; };
+		4CF9A61D984A8B9DF360E11C /* ContactsNameSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsNameSource.swift; sourceTree = "<group>"; };
 		55847E9059F8B2DCE32491D8 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
 		57FD2D855DEF381D8D73FC47 /* DictionMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionMacApp.swift; sourceTree = "<group>"; };
 		72A64C7BF36DD86537E191F9 /* DictationKeyRemapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationKeyRemapper.swift; sourceTree = "<group>"; };
@@ -27,6 +30,7 @@
 		99A5CCEACE051C9B0699304E /* HotkeyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyMonitor.swift; sourceTree = "<group>"; };
 		A9743F633418525233372BCA /* FocusedTextReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedTextReader.swift; sourceTree = "<group>"; };
 		ADC8D89FF13D7C2B4F71D41F /* DictionMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DictionMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADEE8203DCF3BB7EF8E1C170 /* VocabularyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyStore.swift; sourceTree = "<group>"; };
 		AFE452CA501F8B858B950438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B80120800563330B124B9421 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		C62502889C20C2813FB95A55 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
@@ -48,6 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				55847E9059F8B2DCE32491D8 /* AppController.swift */,
+				4CF9A61D984A8B9DF360E11C /* ContactsNameSource.swift */,
 				72A64C7BF36DD86537E191F9 /* DictationKeyRemapper.swift */,
 				57FD2D855DEF381D8D73FC47 /* DictionMacApp.swift */,
 				A9743F633418525233372BCA /* FocusedTextReader.swift */,
@@ -56,6 +61,7 @@
 				C62502889C20C2813FB95A55 /* OverlayController.swift */,
 				B80120800563330B124B9421 /* Permissions.swift */,
 				8165C05037F503630B70E8BB /* TextInserter.swift */,
+				ADEE8203DCF3BB7EF8E1C170 /* VocabularyStore.swift */,
 			);
 			path = DictionMac;
 			sourceTree = "<group>";
@@ -150,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AD772023CB9FB6F4550179D /* AppController.swift in Sources */,
+				0EC4150E04C063BF1BD3E570 /* ContactsNameSource.swift in Sources */,
 				BA3CCBE17FD68D05EFFC3524 /* DictationKeyRemapper.swift in Sources */,
 				27C8A150D309420620D96233 /* DictionMacApp.swift in Sources */,
 				7D5850C1F87B0A044F07775B /* FocusedTextReader.swift in Sources */,
@@ -157,6 +164,7 @@
 				41DB8B010BAD40C113309619 /* OverlayController.swift in Sources */,
 				164148A433A58A8C04104412 /* Permissions.swift in Sources */,
 				78462192891FAB31FE75AEE7 /* TextInserter.swift in Sources */,
+				2C32D7020ABE3FECFDD0FDE8 /* VocabularyStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

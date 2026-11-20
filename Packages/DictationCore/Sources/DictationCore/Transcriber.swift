@@ -8,7 +8,21 @@ let log = Logger(subsystem: "com.dictionapp.core", category: "core")
 public protocol Transcriber: Sendable {
     /// Downloads (first run only) and loads the model, then warms it up.
     func prepare(progress: @escaping @Sendable (Double) -> Void) async throws
-    func transcribe(_ audio: RecordedAudio) async throws -> String
+    func transcribe(_ audio: RecordedAudio, boost: VocabularyBoost) async throws -> String
+}
+
+public extension Transcriber {
+    func transcribe(_ audio: RecordedAudio) async throws -> String {
+        try await transcribe(audio, boost: .standard)
+    }
+}
+
+/// Which personal vocabulary to listen for.
+public enum VocabularyBoost: Sendable {
+    /// Words + contact names (every app).
+    case standard
+    /// Words + contact names + slang (Casual apps).
+    case casual
 }
 
 /// Which Parakeet checkpoint to run. All run on the Apple Neural Engine.
@@ -55,6 +69,12 @@ public actor ParakeetTranscriber: Transcriber {
     private var manager: AsrManager?
     private let converter = AudioConverter()
 
+    // Personal vocabulary boosting (loaded only when there is a vocabulary).
+    private var ctcLoad: Task<CtcModels, Error>?
+    private var standardBoost: VocabularyBoostingSession?
+    private var casualBoost: VocabularyBoostingSession?
+    private var vocabularyGeneration = 0
+
     public init(model: ParakeetModel = .ultra) {
         self.model = model
     }
@@ -76,7 +96,56 @@ public actor ParakeetTranscriber: Transcriber {
         log.info("Parakeet \(self.model.rawValue, privacy: .public) ready in \(Date().timeIntervalSince(start), format: .fixed(precision: 2))s")
     }
 
-    public func transcribe(_ audio: RecordedAudio) async throws -> String {
+    /// Sets the terms to listen for. Downloads the small CTC model (~100 MB)
+    /// the first time a non-empty vocabulary is set. Safe to call repeatedly.
+    public func setVocabulary(standard: [Vocabulary.Term], casual: [Vocabulary.Term]) async {
+        vocabularyGeneration += 1
+        let generation = vocabularyGeneration
+        let standardTerms = Vocabulary.Term.merged(standard)
+        let casualTerms = Vocabulary.Term.merged(casual)
+
+        guard !standardTerms.isEmpty || !casualTerms.isEmpty else {
+            standardBoost = nil
+            casualBoost = nil
+            return
+        }
+
+        do {
+            let start = Date()
+            // One shared load, even if the vocabulary changes while it downloads.
+            let load = ctcLoad ?? Task { try await CtcModels.downloadAndLoad(variant: .ctc110m) }
+            ctcLoad = load
+            let ctc: CtcModels
+            do {
+                ctc = try await load.value
+            } catch {
+                ctcLoad = nil  // retry next time
+                throw error
+            }
+            let standardSession = try await Self.makeSession(standardTerms, ctc: ctc)
+            let casualSession = try await Self.makeSession(casualTerms, ctc: ctc)
+            // A newer call may have started while we were loading.
+            guard generation == vocabularyGeneration else { return }
+            standardBoost = standardSession
+            casualBoost = casualSession
+            log.info("Vocabulary ready: \(standardTerms.count) terms (+\(casualTerms.count - standardTerms.count) casual) in \(Date().timeIntervalSince(start), format: .fixed(precision: 2))s")
+        } catch {
+            log.error("Vocabulary boosting unavailable: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    private static func makeSession(_ terms: [Vocabulary.Term], ctc: CtcModels) async throws -> VocabularyBoostingSession? {
+        guard !terms.isEmpty else { return nil }
+        let context = CustomVocabularyContext(
+            terms: terms.map { CustomVocabularyTerm(text: $0.text, aliases: $0.aliases.isEmpty ? nil : $0.aliases) }
+        )
+        return try await VocabularyBoostingSession(vocabulary: context, ctcModels: ctc, thresholds: boostThresholds)
+    }
+
+    /// Rescoring thresholds. FluidAudio's defaults (recall-oriented).
+    static let boostThresholds = VocabularyBoostingSession.Thresholds()
+
+    public func transcribe(_ audio: RecordedAudio, boost: VocabularyBoost) async throws -> String {
         guard let manager else { throw TranscriberError.notReady }
 
         var samples = audio.sampleRate == 16_000
@@ -92,6 +161,19 @@ public actor ParakeetTranscriber: Transcriber {
 
         var state = TdtDecoderState.make(decoderLayers: await manager.decoderLayerCount)
         let result = try await manager.transcribe(samples, decoderState: &state)
-        return result.text
+
+        let session = boost == .casual ? casualBoost : standardBoost
+        guard let session, let timings = result.tokenTimings, !timings.isEmpty,
+              session.hasCTCRescoringCandidates(text: result.text, tokenTimings: timings)
+        else { return result.text }
+
+        let start = Date()
+        guard let rescored = await session.rescore(text: result.text, tokenTimings: timings, audioSamples: samples),
+              rescored.wasModified
+        else { return result.text }
+
+        let swaps = rescored.replacements.filter(\.shouldReplace).compactMap(\.replacementWord)
+        log.info("Vocabulary: \(swaps.count) swap(s) in \(Date().timeIntervalSince(start), format: .fixed(precision: 3))s")
+        return rescored.text
     }
 }

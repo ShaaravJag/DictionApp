@@ -27,6 +27,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
+        NSContactsUsageDescription: "DictionApp reads your contacts' names so it spells them correctly when you dictate. Names stay on this Mac."
         NSMicrophoneUsageDescription: "DictionApp listens while you hold the dictation key and turns your speech into text, entirely on this Mac."
     settings:
       base:
