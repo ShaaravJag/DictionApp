@@ -1,0 +1,373 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		164148A433A58A8C04104412 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80120800563330B124B9421 /* Permissions.swift */; };
+		27C8A150D309420620D96233 /* DictionMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FD2D855DEF381D8D73FC47 /* DictionMacApp.swift */; };
+		41DB8B010BAD40C113309619 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62502889C20C2813FB95A55 /* OverlayController.swift */; };
+		4AD772023CB9FB6F4550179D /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55847E9059F8B2DCE32491D8 /* AppController.swift */; };
+		78462192891FAB31FE75AEE7 /* TextInserter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8165C05037F503630B70E8BB /* TextInserter.swift */; };
+		7D5850C1F87B0A044F07775B /* FocusedTextReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9743F633418525233372BCA /* FocusedTextReader.swift */; };
+		BA3CCBE17FD68D05EFFC3524 /* DictationKeyRemapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A64C7BF36DD86537E191F9 /* DictationKeyRemapper.swift */; };
+		C97595630C5659593AD8366E /* HotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A5CCEACE051C9B0699304E /* HotkeyMonitor.swift */; };
+		E8AAB3D480C1C1399C3AB9C4 /* DictationCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1670DB071226207118D0F0C /* DictationCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3E76FD87889F4B2A723FE47D /* DictationCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DictationCore; path = Packages/DictationCore; sourceTree = SOURCE_ROOT; };
+		55847E9059F8B2DCE32491D8 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
+		57FD2D855DEF381D8D73FC47 /* DictionMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionMacApp.swift; sourceTree = "<group>"; };
+		72A64C7BF36DD86537E191F9 /* DictationKeyRemapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationKeyRemapper.swift; sourceTree = "<group>"; };
+		8165C05037F503630B70E8BB /* TextInserter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInserter.swift; sourceTree = "<group>"; };
+		99A5CCEACE051C9B0699304E /* HotkeyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyMonitor.swift; sourceTree = "<group>"; };
+		A9743F633418525233372BCA /* FocusedTextReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedTextReader.swift; sourceTree = "<group>"; };
+		ADC8D89FF13D7C2B4F71D41F /* DictionMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DictionMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFE452CA501F8B858B950438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B80120800563330B124B9421 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		C62502889C20C2813FB95A55 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8C9570171CF0827A349FC423 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8AAB3D480C1C1399C3AB9C4 /* DictationCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0FE55FAC5F3CD70AFE644E20 /* DictionMac */ = {
+			isa = PBXGroup;
+			children = (
+				55847E9059F8B2DCE32491D8 /* AppController.swift */,
+				72A64C7BF36DD86537E191F9 /* DictationKeyRemapper.swift */,
+				57FD2D855DEF381D8D73FC47 /* DictionMacApp.swift */,
+				A9743F633418525233372BCA /* FocusedTextReader.swift */,
+				99A5CCEACE051C9B0699304E /* HotkeyMonitor.swift */,
+				AFE452CA501F8B858B950438 /* Info.plist */,
+				C62502889C20C2813FB95A55 /* OverlayController.swift */,
+				B80120800563330B124B9421 /* Permissions.swift */,
+				8165C05037F503630B70E8BB /* TextInserter.swift */,
+			);
+			path = DictionMac;
+			sourceTree = "<group>";
+		};
+		19C9EB006F9F33E80DC5C75E /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				3E76FD87889F4B2A723FE47D /* DictationCore */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		1FDD66288CB537B923FDC4AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ADC8D89FF13D7C2B4F71D41F /* DictionMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83F666AC590B0B7A69A66CC0 = {
+			isa = PBXGroup;
+			children = (
+				0FE55FAC5F3CD70AFE644E20 /* DictionMac */,
+				19C9EB006F9F33E80DC5C75E /* Packages */,
+				1FDD66288CB537B923FDC4AF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		497FC188899AD4D12A174A78 /* DictionMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6DF46085F0DA98C61D8FD64 /* Build configuration list for PBXNativeTarget "DictionMac" */;
+			buildPhases = (
+				15ECFD4ACEA22D6998FDC130 /* Sources */,
+				8C9570171CF0827A349FC423 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DictionMac;
+			packageProductDependencies = (
+				A1670DB071226207118D0F0C /* DictationCore */,
+			);
+			productName = DictionMac;
+			productReference = ADC8D89FF13D7C2B4F71D41F /* DictionMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB677FA189D96888F7E0487A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					497FC188899AD4D12A174A78 = {
+						DevelopmentTeam = NY3NPMATGX;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 7F301A9C04E6D04A4BEB20AA /* Build configuration list for PBXProject "DictionApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 83F666AC590B0B7A69A66CC0;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				276FD0874340D67BF88159DA /* XCLocalSwiftPackageReference "Packages/DictationCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1FDD66288CB537B923FDC4AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				497FC188899AD4D12A174A78 /* DictionMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		15ECFD4ACEA22D6998FDC130 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD772023CB9FB6F4550179D /* AppController.swift in Sources */,
+				BA3CCBE17FD68D05EFFC3524 /* DictationKeyRemapper.swift in Sources */,
+				27C8A150D309420620D96233 /* DictionMacApp.swift in Sources */,
+				7D5850C1F87B0A044F07775B /* FocusedTextReader.swift in Sources */,
+				C97595630C5659593AD8366E /* HotkeyMonitor.swift in Sources */,
+				41DB8B010BAD40C113309619 /* OverlayController.swift in Sources */,
+				164148A433A58A8C04104412 /* Permissions.swift in Sources */,
+				78462192891FAB31FE75AEE7 /* TextInserter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6A54C2ABA3B9FB0B993AAD52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NY3NPMATGX;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DictionMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dictionapp.mac;
+				PRODUCT_NAME = DictionApp;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6C7701FEEC487557E704E416 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NY3NPMATGX;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DictionMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dictionapp.mac;
+				PRODUCT_NAME = DictionApp;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C24D734BC952032254F3C437 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E9EE5B77AA5ACEC25D4150AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7F301A9C04E6D04A4BEB20AA /* Build configuration list for PBXProject "DictionApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C24D734BC952032254F3C437 /* Debug */,
+				E9EE5B77AA5ACEC25D4150AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D6DF46085F0DA98C61D8FD64 /* Build configuration list for PBXNativeTarget "DictionMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6C7701FEEC487557E704E416 /* Debug */,
+				6A54C2ABA3B9FB0B993AAD52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		276FD0874340D67BF88159DA /* XCLocalSwiftPackageReference "Packages/DictationCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/DictationCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1670DB071226207118D0F0C /* DictationCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DictationCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = DB677FA189D96888F7E0487A /* Project object */;
+}

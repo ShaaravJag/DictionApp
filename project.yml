@@ -1,0 +1,44 @@
+# XcodeGen spec. Regenerate the Xcode project with:  xcodegen generate
+name: DictionApp
+options:
+  bundleIdPrefix: com.dictionapp
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+
+packages:
+  DictationCore:
+    path: Packages/DictationCore
+
+targets:
+  DictionMac:
+    type: application
+    platform: macOS
+    sources:
+      - path: DictionMac
+    dependencies:
+      - package: DictationCore
+    info:
+      path: DictionMac/Info.plist
+      properties:
+        CFBundleDisplayName: DictionApp
+        CFBundleName: DictionApp
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.productivity
+        NSMicrophoneUsageDescription: "DictionApp listens while you hold the dictation key and turns your speech into text, entirely on this Mac."
+    settings:
+      base:
+        PRODUCT_NAME: DictionApp
+        PRODUCT_BUNDLE_IDENTIFIER: com.dictionapp.mac
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: NO
+        # Signed with your free Personal Team so macOS keeps permissions across rebuilds.
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: NY3NPMATGX
