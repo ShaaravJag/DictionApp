@@ -21,7 +21,7 @@ import Testing
     }
 
     @Test func recapitalizesAfterFillerAtSentenceStart() {
-        #expect(formatter.format("That's fine. Uh, let's meet at five.") == "That's fine. Let's meet at five.")
+        #expect(formatter.format("That's fine. Uh, let's meet at five.") == "That's fine. Let's meet at 5.")
     }
 
     @Test func keepsWordsThatContainFillers() {

@@ -52,6 +52,11 @@ final class AppController: ObservableObject {
         didSet { defaults.set(spokenPunctuation, forKey: Keys.spokenPunctuation) }
     }
 
+    /// "six" -> 6, "three a m" -> 3am, "five dollars" -> $5.
+    @Published var numbersAsDigits: Bool {
+        didSet { defaults.set(numbersAsDigits, forKey: Keys.numbersAsDigits) }
+    }
+
     /// Look at the text around the cursor to add spaces and fix capitalization.
     @Published var smartSpacing: Bool {
         didSet { defaults.set(smartSpacing, forKey: Keys.smartSpacing) }
@@ -209,6 +214,7 @@ final class AppController: ObservableObject {
         static let removeFillers = "removeFillers"
         static let spokenPunctuation = "spokenPunctuation"
         static let smartSpacing = "smartSpacing"
+        static let numbersAsDigits = "numbersAsDigits"
         static let appStyles = "appStyles"
         static let playSounds = "playSounds"
         static let useContactNames = "useContactNames"
@@ -217,7 +223,7 @@ final class AppController: ObservableObject {
     private init() {
         defaults.register(defaults: [
             Keys.removeFillers: true, Keys.playSounds: true,
-            Keys.spokenPunctuation: true, Keys.smartSpacing: true,
+            Keys.spokenPunctuation: true, Keys.smartSpacing: true, Keys.numbersAsDigits: true,
             // You text in lowercase in Messages.
             Keys.appStyles: ["com.apple.MobileSMS": WritingStyle.casual.rawValue],
         ])
@@ -227,6 +233,7 @@ final class AppController: ObservableObject {
         removeFillers = defaults.bool(forKey: Keys.removeFillers)
         spokenPunctuation = defaults.bool(forKey: Keys.spokenPunctuation)
         smartSpacing = defaults.bool(forKey: Keys.smartSpacing)
+        numbersAsDigits = defaults.bool(forKey: Keys.numbersAsDigits)
         let storedStyles = defaults.dictionary(forKey: Keys.appStyles) as? [String: String] ?? [:]
         appStyles = storedStyles.compactMapValues(WritingStyle.init(rawValue:))
         playSounds = defaults.bool(forKey: Keys.playSounds)
@@ -420,13 +427,15 @@ final class AppController: ObservableObject {
         play("Pop")
         let transcriber = self.transcriber
         let isProperNoun: ProperNounCheck = { ProperNouns.isProperNoun($0) }
+        let targetBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+        let style = style(for: targetBundleID)
         let formatter = TextFormatter(
             removeFillers: removeFillers,
             spokenPunctuation: spokenPunctuation,
+            automaticPunctuation: style.usesAutomaticPunctuation,
+            numbersAsDigits: numbersAsDigits,
             isProperNoun: isProperNoun
         )
-        let targetBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
-        let style = style(for: targetBundleID)
         let boost: VocabularyBoost = style == .casual ? .casual : .standard
         let replacer = style == .casual ? casualReplacer : standardReplacer
         let contextual = smartSpacing

@@ -21,7 +21,8 @@ The menu bar icon has: last dictation (paste/copy), hotkey choice, speech model,
 - **Automatic punctuation** comes from the speech model.
 - **Spoken punctuation** works on top of it: say "comma", "period", "question mark", "exclamation point", "colon", "semicolon", "new line", "new paragraph", "open/close quote", "open/close paren", "em dash", or "dot dot dot".
 - **Smart spacing & capitalization** reads the text around the cursor (via Accessibility). It adds the space after the previous sentence and lowercases when you're mid-sentence. For apps that hide their text, it remembers what it last pasted.
-- **Per-app styles:** Casual (all lowercase, acronyms kept, no automatic final period) is preset for Messages. Any app can be set from the menu.
+- **Numbers as digits** (every app): six → 6, twenty five → 25, three a m → 3am, three thirty p m → 3:30pm, five dollars and fifty cents → $5.50, ten percent → 10%, three point five → 3.5, twenty twenty six → 2026, five million → 5 million. "one" stays a word unless it's clearly a number ("no one", "one more thing"). Ordinals (first, second) stay words.
+- **Per-app styles:** Casual (all lowercase, acronyms kept, only the punctuation you say) is preset for Messages. The model's own commas, periods and question marks are removed there; "comma", "question mark", "period" still work. Any app can be set from the menu.
 
 ## Your vocabulary
 

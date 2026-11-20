@@ -102,6 +102,36 @@ struct TranscriberIntegrationTests {
         }
     }
 
+    /// Numbers come out as digits everywhere; Messages (Casual) keeps only spoken punctuation.
+    @Test func numbersAndCasualPunctuation() async throws {
+        let transcriber = ParakeetTranscriber(model: .ultra)
+        try await transcriber.prepare { _ in }
+        let standard = TextFormatter()
+        let casual = TextFormatter(automaticPunctuation: false)
+
+        let cases: [(said: String, digits: [String])] = [
+            ("It's currently three a m.", ["3am"]),
+            ("I need six, seven, eight.", ["6", "7", "8"]),
+            ("Count six. Seven. Eight.", ["6", "7", "8"]),
+            ("Meet me at three thirty p m.", ["3:30pm"]),
+            ("It costs five dollars and fifty cents.", ["$5.50"]),
+            ("Hey, what's up? Are you coming tonight?", []),
+        ]
+        for (said, digits) in cases {
+            let raw = try await transcriber.transcribe(try synthesize(said))
+            let std = standard.format(raw)
+            let c = casual.formatDetailed(raw)
+            let msg = WritingStyle.casual.apply(c.text, keepFinalPunctuation: c.endsWithSpokenPunctuation)
+            print("E2E said: \(said)\nE2E raw:      \(raw)\nE2E standard: \(std)\nE2E messages: \(msg)")
+            for d in digits {
+                #expect(std.contains(d), "standard missing \(d)")
+                #expect(msg.contains(d), "messages missing \(d)")
+            }
+            #expect(!msg.contains(where: { ",?!;".contains($0) }), "messages kept automatic punctuation")
+            #expect(!msg.hasSuffix("."), "messages kept a final period")
+        }
+    }
+
     private func synthesize(_ sentence: String) throws -> RecordedAudio {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("dictation-e2e-\(UUID().uuidString).aiff")
         defer { try? FileManager.default.removeItem(at: url) }

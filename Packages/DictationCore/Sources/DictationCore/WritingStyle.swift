@@ -8,7 +8,7 @@ public enum WritingStyle: String, CaseIterable, Codable, Sendable, Identifiable 
     /// Normal sentence case and punctuation.
     case standard
     /// Texting style: all lowercase (names and "i" too, acronyms stay caps),
-    /// no period at the end.
+    /// and only the punctuation you say out loud.
     case casual
 
     public var id: String { rawValue }
@@ -16,12 +16,16 @@ public enum WritingStyle: String, CaseIterable, Codable, Sendable, Identifiable 
     public var displayName: String {
         switch self {
         case .standard: return "Standard"
-        case .casual: return "Casual (lowercase, no final period)"
+        case .casual: return "Casual (lowercase, only punctuation you say)"
         }
     }
 
     /// Whether context-aware capitalization should run for this style.
     public var adjustsCapitalization: Bool { self == .standard }
+
+    /// Whether the speech model's own commas, periods and question marks are kept.
+    /// Casual keeps only the punctuation you say ("comma", "question mark"…).
+    public var usesAutomaticPunctuation: Bool { self == .standard }
 
     /// - Parameter keepFinalPunctuation: true when you said the final mark out loud
     ///   ("…period"); Casual then keeps it instead of dropping the model's period.

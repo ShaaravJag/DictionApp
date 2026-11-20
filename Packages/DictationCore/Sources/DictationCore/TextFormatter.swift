@@ -9,15 +9,23 @@ public struct TextFormatter: Sendable {
     /// Say "comma", "question mark", "new line"… to insert punctuation yourself.
     /// The speech model's automatic punctuation stays on either way.
     public var spokenPunctuation: Bool
+    /// Keep the speech model's own punctuation. Off (Casual / Messages): only what you say.
+    public var automaticPunctuation: Bool
+    /// "six" -> 6, "three a m" -> 3am, "five dollars" -> $5.
+    public var numbersAsDigits: Bool
     public var isProperNoun: ProperNounCheck
 
     public init(
         removeFillers: Bool = true,
         spokenPunctuation: Bool = true,
+        automaticPunctuation: Bool = true,
+        numbersAsDigits: Bool = true,
         isProperNoun: @escaping ProperNounCheck = { _ in false }
     ) {
         self.removeFillers = removeFillers
         self.spokenPunctuation = spokenPunctuation
+        self.automaticPunctuation = automaticPunctuation
+        self.numbersAsDigits = numbersAsDigits
         self.isProperNoun = isProperNoun
     }
 
@@ -44,9 +52,19 @@ public struct TextFormatter: Sendable {
             text = Self.stripFillers(text)
         }
 
+        // Before spoken punctuation, so the marks you say are never removed.
+        if !automaticPunctuation {
+            text = AutomaticPunctuation.removing(from: text)
+        }
+
         var endsWithSpoken = false
         if spokenPunctuation {
             (text, endsWithSpoken) = SpokenPunctuation(isProperNoun: isProperNoun).applyDetailed(text)
+        }
+
+        // After spoken punctuation: "six comma seven" -> "6, 7", and "one period of time" keeps its word.
+        if numbersAsDigits {
+            text = SpokenNumbers().apply(text)
         }
 
         text = Self.collapseWhitespace(text)

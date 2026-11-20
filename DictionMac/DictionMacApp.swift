@@ -64,6 +64,7 @@ private struct MenuContent: View {
         }
         Toggle("Remove Filler Words", isOn: $controller.removeFillers)
         Toggle("Spoken Punctuation (say \"comma\", \"new line\"…)", isOn: $controller.spokenPunctuation)
+        Toggle("Numbers as Digits (six → 6, three a m → 3am)", isOn: $controller.numbersAsDigits)
         Toggle("Smart Spacing & Capitalization", isOn: $controller.smartSpacing)
         Toggle("Play Sounds", isOn: $controller.playSounds)
 
