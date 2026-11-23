@@ -74,9 +74,22 @@ public actor ParakeetTranscriber: Transcriber {
     private var standardBoost: VocabularyBoostingSession?
     private var casualBoost: VocabularyBoostingSession?
     private var vocabularyGeneration = 0
+    private let boostThresholds: VocabularyBoostingSession.Thresholds
+    private var isCommonWord: CommonWordCheck?
 
-    public init(model: ParakeetModel = .ultra) {
+    /// - Parameter boostThresholds: how sure the name matcher must be before swapping a word.
+    public init(model: ParakeetModel = .ultra, boostThresholds: VocabularyBoostingSession.Thresholds = .recall) {
         self.model = model
+        self.boostThresholds = boostThresholds
+    }
+
+    /// Words the name matcher may never replace (real dictionary words like "coding").
+    /// Your vocabulary terms are names and slang the dictionary doesn't know, so a swap
+    /// away from a real word is almost always wrong.
+    public typealias CommonWordCheck = @Sendable (String) async -> Bool
+
+    public func setCommonWordCheck(_ check: CommonWordCheck?) {
+        isCommonWord = check
     }
 
     public func prepare(progress: @escaping @Sendable (Double) -> Void) async throws {
@@ -122,8 +135,8 @@ public actor ParakeetTranscriber: Transcriber {
                 ctcLoad = nil  // retry next time
                 throw error
             }
-            let standardSession = try await Self.makeSession(standardTerms, ctc: ctc)
-            let casualSession = try await Self.makeSession(casualTerms, ctc: ctc)
+            let standardSession = try await makeSession(standardTerms, ctc: ctc)
+            let casualSession = try await makeSession(casualTerms, ctc: ctc)
             // A newer call may have started while we were loading.
             guard generation == vocabularyGeneration else { return }
             standardBoost = standardSession
@@ -134,7 +147,7 @@ public actor ParakeetTranscriber: Transcriber {
         }
     }
 
-    private static func makeSession(_ terms: [Vocabulary.Term], ctc: CtcModels) async throws -> VocabularyBoostingSession? {
+    private func makeSession(_ terms: [Vocabulary.Term], ctc: CtcModels) async throws -> VocabularyBoostingSession? {
         guard !terms.isEmpty else { return nil }
         let context = CustomVocabularyContext(
             terms: terms.map { CustomVocabularyTerm(text: $0.text, aliases: $0.aliases.isEmpty ? nil : $0.aliases) }
@@ -142,8 +155,6 @@ public actor ParakeetTranscriber: Transcriber {
         return try await VocabularyBoostingSession(vocabulary: context, ctcModels: ctc, thresholds: boostThresholds)
     }
 
-    /// Rescoring thresholds. FluidAudio's defaults (recall-oriented).
-    static let boostThresholds = VocabularyBoostingSession.Thresholds()
 
     public func transcribe(_ audio: RecordedAudio, boost: VocabularyBoost) async throws -> String {
         guard let manager else { throw TranscriberError.notReady }
@@ -172,8 +183,52 @@ public actor ParakeetTranscriber: Transcriber {
               rescored.wasModified
         else { return result.text }
 
-        let swaps = rescored.replacements.filter(\.shouldReplace).compactMap(\.replacementWord)
-        log.info("Vocabulary: \(swaps.count) swap(s) in \(Date().timeIntervalSince(start), format: .fixed(precision: 3))s")
-        return rescored.text
+        // Keep only swaps away from words the dictionary doesn't know.
+        var accepted: [(from: String, to: String)] = []
+        var blocked = 0
+        for swap in rescored.replacements where swap.shouldReplace {
+            guard let to = swap.replacementWord else { continue }
+            if let isCommonWord, await Self.isAllCommon(swap.originalWord, isCommonWord) {
+                blocked += 1
+            } else {
+                accepted.append((swap.originalWord, to))
+            }
+        }
+        log.info("Vocabulary: \(accepted.count) swap(s), \(blocked) blocked, in \(Date().timeIntervalSince(start), format: .fixed(precision: 3))s")
+        if blocked == 0 { return rescored.text }
+        return accepted.reduce(result.text) { Self.replacingFirst($1.from, with: $1.to, in: $0) }
     }
+
+    static func words(_ text: String) -> [String] {
+        text.split(whereSeparator: { !($0.isLetter || $0.isNumber || $0 == "'" || $0 == "’") }).map(String.init)
+    }
+
+    static func isAllCommon(_ phrase: String, _ check: CommonWordCheck) async -> Bool {
+        let parts = words(phrase)
+        guard !parts.isEmpty else { return false }
+        for part in parts where !(await check(part)) { return false }
+        return true
+    }
+
+    /// Replaces the first whole-word occurrence of `from` (ignoring its punctuation), keeping
+    /// the punctuation around it.
+    static func replacingFirst(_ from: String, with to: String, in text: String) -> String {
+        let fromWords = words(from), toWords = words(to)
+        guard !fromWords.isEmpty, !toWords.isEmpty else { return text }
+        let pattern = "(?<![\\p{L}\\p{N}])" + fromWords.map(NSRegularExpression.escapedPattern(for:)).joined(separator: "[\\s,.-]+")
+            + "(?![\\p{L}\\p{N}])"
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]),
+              let match = regex.firstMatch(in: text, range: NSRange(location: 0, length: (text as NSString).length))
+        else { return text }
+        return (text as NSString).replacingCharacters(in: match.range, with: toWords.joined(separator: " "))
+    }
+}
+
+extension VocabularyBoostingSession.Thresholds {
+    /// FluidAudio's recall-oriented defaults. Used with the common-word check, which blocks
+    /// the wrong swaps these make with hundreds of contact names ("party" -> "Parth").
+    public static let recall = VocabularyBoostingSession.Thresholds()
+    /// FluidAudio's strict dictation setting. Measured with 162 names: no wrong swaps, but it
+    /// fixed only 3 of 22 misheard names (recall + common-word check: 9 of 22).
+    public static let dictation = VocabularyBoostingSession.Thresholds(cbw: 0, minSimilarity: 0.7)
 }

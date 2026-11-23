@@ -159,6 +159,17 @@ enum ProperNouns {
         lock.withLock { custom = lowered }
     }
 
+    /// A real everyday word ("coding", "for"), which the name matcher must never replace.
+    /// Checks the system word list, then the spell checker (which knows forms like "coding").
+    static func isCommonWord(_ word: String) async -> Bool {
+        let lower = word.lowercased()
+        guard lower.count > 1, lower.contains(where: \.isLetter) else { return false }
+        if dictionaryWords().contains(lower) { return true }
+        return await MainActor.run {
+            NSSpellChecker.shared.checkSpelling(of: lower, startingAt: 0).location == NSNotFound
+        }
+    }
+
     /// `word` is the word as dictated (e.g. "Sarah"). Main thread only (spell checker).
     static func isProperNoun(_ word: String) -> Bool {
         let lower = word.lowercased()

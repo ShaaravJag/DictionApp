@@ -78,3 +78,23 @@ import Testing
         #expect(merged == [.init("Tejas", aliases: ["Tehas", "Texas guy"]), .init("Anirudh")])
     }
 }
+
+@Suite struct BoostSwapTests {
+    @Test func replacesOnlyTheWholeWord() {
+        #expect(ParakeetTranscriber.replacingFirst("Vihan", with: "Vihaan", in: "Can you ask Vihan to call me bait?")
+            == "Can you ask Vihaan to call me bait?")
+        #expect(ParakeetTranscriber.replacingFirst("Anirud", with: "Anirudh", in: "lunch with Anirud, and Anirudh's dog")
+            == "lunch with Anirudh, and Anirudh's dog")
+        #expect(ParakeetTranscriber.replacingFirst("Annie Rude", with: "Anirudh", in: "with Annie rude and Tejas")
+            == "with Anirudh and Tejas")
+        #expect(ParakeetTranscriber.replacingFirst("ran", with: "Ram", in: "Rand ran home") == "Rand Ram home")
+    }
+
+    @Test func phraseIsCommonOnlyIfEveryWordIs() async {
+        let check: ParakeetTranscriber.CommonWordCheck = { ["the", "party"].contains($0.lowercased()) }
+        #expect(await ParakeetTranscriber.isAllCommon("party.", check))
+        #expect(await ParakeetTranscriber.isAllCommon("the Party", check))
+        #expect(!(await ParakeetTranscriber.isAllCommon("the Sharof", check)))
+        #expect(!(await ParakeetTranscriber.isAllCommon("", check)))
+    }
+}

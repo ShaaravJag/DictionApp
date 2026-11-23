@@ -40,6 +40,18 @@ final class VocabularyStore {
         }
     }
 
+    /// Saves "it wrote `heard`, I meant `meant`" under Words and applies it right away.
+    func addCorrection(heard: String, meant: String) throws {
+        createFileIfNeeded()
+        let url = Self.fileURL
+        let contents = (try? String(contentsOf: url, encoding: .utf8)) ?? Vocabulary.template
+        let updated = Vocabulary.addingCorrection(heard: heard, meant: meant, to: contents)
+        guard updated != contents else { return }
+        try updated.write(to: url, atomically: true, encoding: .utf8)
+        logger.info("Saved a name correction")
+        reload()
+    }
+
     private func createFileIfNeeded() {
         let url = Self.fileURL
         guard !FileManager.default.fileExists(atPath: url.path) else { return }

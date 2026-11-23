@@ -34,6 +34,12 @@ private struct MenuContent: View {
     var body: some View {
         Text(controller.statusText)
 
+        if controller.dictationKeyBlocked, let app = controller.secureInputApp {
+            Text("It has Secure Input on (a password field), which hides keys from other apps.")
+            Text("Click out of the password field, or quit and reopen \(app).")
+            Text("Or pick Fn / Globe as the Dictation Key, which usually still works.")
+        }
+
         if !controller.microphoneGranted {
             Button("Grant Microphone Access…") { Permissions.openMicrophoneSettings() }
         }
@@ -89,6 +95,7 @@ private struct MenuContent: View {
         Divider()
 
         Button("Edit Vocabulary… (\(controller.vocabularySummary))") { controller.editVocabulary() }
+        Button("Fix a Name…") { controller.fixName() }
         Toggle(
             controller.useContactNames && controller.contactNameCount > 0
                 ? "Use Contact Names (\(controller.contactNameCount) names)"

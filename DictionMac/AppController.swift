@@ -28,6 +28,14 @@ final class AppController: ObservableObject {
 
     // MARK: - Settings (persisted)
 
+    /// The app whose Secure Input is hiding keypresses from us (e.g. "Google Chrome"), if any.
+    @Published private(set) var secureInputApp: String?
+    private let secureInput = SecureInputWatcher()
+
+    /// macOS hides key presses like the 🎤 key while another app has Secure Input on.
+    /// (Modifier triggers like Fn still get through.)
+    var dictationKeyBlocked: Bool { trigger == .dictationKey && secureInputApp != nil }
+
     @Published var trigger: HotkeyTrigger {
         didSet {
             defaults.set(trigger.rawValue, forKey: Keys.trigger)
@@ -135,6 +143,59 @@ final class AppController: ObservableObject {
         vocabularyStore.openInEditor()
     }
 
+    /// "It wrote X, I meant Y": saved to the vocabulary file and used from the next dictation on.
+    func fixName() {
+        // Let the menu finish closing before showing a window.
+        DispatchQueue.main.async { [weak self] in self?.presentFixName(heard: "", meant: "") }
+    }
+
+    private func presentFixName(heard: String, meant: String) {
+        NSApp.activate()
+        let alert = NSAlert()
+        alert.messageText = "Fix a Name"
+        var info = "Type what DictionApp wrote and what you meant. It's corrected from your next dictation on, in every app."
+        if let lastTranscript {
+            info += "\n\nLast dictation: \u{201C}\(lastTranscript.prefix(140))\u{201D}"
+        }
+        alert.informativeText = info
+
+        let heardField = NSTextField(string: heard)
+        heardField.placeholderString = "e.g. Sharav"
+        let meantField = NSTextField(string: meant)
+        meantField.placeholderString = "e.g. Shaarav"
+        let form = NSView(frame: NSRect(x: 0, y: 0, width: 300, height: 60))
+        for (row, (label, field)) in [("It wrote:", heardField), ("You meant:", meantField)].enumerated() {
+            let y = CGFloat(row == 0 ? 34 : 2)
+            let labelView = NSTextField(labelWithString: label)
+            labelView.frame = NSRect(x: 0, y: y + 3, width: 80, height: 18)
+            field.frame = NSRect(x: 84, y: y, width: 216, height: 24)
+            form.addSubview(labelView)
+            form.addSubview(field)
+        }
+        heardField.nextKeyView = meantField
+        alert.accessoryView = form
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+        alert.window.initialFirstResponder = heardField
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let newHeard = heardField.stringValue, newMeant = meantField.stringValue
+
+        if let problem = Vocabulary.correctionProblem(heard: newHeard, meant: newMeant) {
+            let warning = NSAlert()
+            warning.messageText = problem
+            warning.runModal()
+            presentFixName(heard: newHeard, meant: newMeant)
+            return
+        }
+        do {
+            try vocabularyStore.addCorrection(heard: newHeard, meant: newMeant)
+        } catch {
+            let failure = NSAlert(error: error)
+            failure.runModal()
+        }
+    }
+
     private func applyContactsSetting() {
         if useContactNames {
             Task {
@@ -168,7 +229,10 @@ final class AppController: ObservableObject {
         let standard = vocabulary.words + contacts.names
         let casual = standard + vocabulary.slang
         let transcriber = self.transcriber
-        Task { await transcriber.setVocabulary(standard: standard, casual: casual) }
+        Task {
+            await transcriber.setCommonWordCheck { await ProperNouns.isCommonWord($0) }
+            await transcriber.setVocabulary(standard: standard, casual: casual)
+        }
     }
 
     @Published var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled {
@@ -268,6 +332,9 @@ final class AppController: ObservableObject {
         if useContactNames { applyContactsSetting() }
 
         requestPermissionsIfNeeded()
+
+        secureInput.onChange = { [weak self] app in self?.secureInputApp = app }
+        secureInput.start()
     }
 
     func shutdown() {
@@ -529,6 +596,7 @@ final class AppController: ObservableObject {
         case .idle:
             if !accessibilityGranted { return "Needs Accessibility permission" }
             if !microphoneGranted { return "Needs Microphone permission" }
+            if dictationKeyBlocked, let app = secureInputApp { return "⚠️ \(app) is blocking the 🎤 key" }
             return "Ready: hold \(trigger.shortName) to dictate"
         case .recording(let handsFree):
             return handsFree ? "Listening (hands-free)…" : "Listening…"
@@ -545,7 +613,7 @@ final class AppController: ObservableObject {
         case .transcribing: return "ellipsis.circle"
         case .loadingModel: return "arrow.down.circle"
         case .error: return "exclamationmark.triangle"
-        case .idle: return accessibilityGranted && microphoneGranted ? "waveform" : "exclamationmark.triangle"
+        case .idle: return accessibilityGranted && microphoneGranted && !dictationKeyBlocked ? "waveform" : "exclamationmark.triangle"
         }
     }
 }

@@ -17,6 +17,7 @@
 		7D5850C1F87B0A044F07775B /* FocusedTextReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9743F633418525233372BCA /* FocusedTextReader.swift */; };
 		BA3CCBE17FD68D05EFFC3524 /* DictationKeyRemapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A64C7BF36DD86537E191F9 /* DictationKeyRemapper.swift */; };
 		C97595630C5659593AD8366E /* HotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A5CCEACE051C9B0699304E /* HotkeyMonitor.swift */; };
+		D12C05524AF65BBD69629ED2 /* SecureInputWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6B845AC7149B181BBCAAC4 /* SecureInputWatcher.swift */; };
 		E8AAB3D480C1C1399C3AB9C4 /* DictationCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1670DB071226207118D0F0C /* DictationCore */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		ADEE8203DCF3BB7EF8E1C170 /* VocabularyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyStore.swift; sourceTree = "<group>"; };
 		AFE452CA501F8B858B950438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B80120800563330B124B9421 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		BD6B845AC7149B181BBCAAC4 /* SecureInputWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureInputWatcher.swift; sourceTree = "<group>"; };
 		C62502889C20C2813FB95A55 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -60,6 +62,7 @@
 				AFE452CA501F8B858B950438 /* Info.plist */,
 				C62502889C20C2813FB95A55 /* OverlayController.swift */,
 				B80120800563330B124B9421 /* Permissions.swift */,
+				BD6B845AC7149B181BBCAAC4 /* SecureInputWatcher.swift */,
 				8165C05037F503630B70E8BB /* TextInserter.swift */,
 				ADEE8203DCF3BB7EF8E1C170 /* VocabularyStore.swift */,
 			);
@@ -163,6 +166,7 @@
 				C97595630C5659593AD8366E /* HotkeyMonitor.swift in Sources */,
 				41DB8B010BAD40C113309619 /* OverlayController.swift in Sources */,
 				164148A433A58A8C04104412 /* Permissions.swift in Sources */,
+				D12C05524AF65BBD69629ED2 /* SecureInputWatcher.swift in Sources */,
 				78462192891FAB31FE75AEE7 /* TextInserter.swift in Sources */,
 				2C32D7020ABE3FECFDD0FDE8 /* VocabularyStore.swift in Sources */,
 			);
